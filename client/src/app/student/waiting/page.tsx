@@ -1,24 +1,39 @@
 'use client';
 
-// This is the page a student sees after entering their name.
+import { useEffect } from 'react';
+import { useSocket } from '../../../context/SocketContext'; // Corrected relative path again for build system
+
 export default function StudentWaitingPage() {
+    const { socket } = useSocket();
+
+    // This useEffect hook listens for the signal from the server to start the poll
+    useEffect(() => {
+        if (socket) {
+            const handleNewQuestion = () => {
+                // When a new question is broadcast by the teacher, navigate to the poll page
+                window.location.href = '/student/poll';
+            };
+
+            socket.on('new_question', handleNewQuestion);
+
+            // It's good practice to clean up the listener when the component unmounts
+            return () => {
+                socket.off('new_question', handleNewQuestion);
+            };
+        }
+    }, [socket]);
+
     return (
-        <main className="flex flex-col items-center justify-center min-h-screen bg-[#F2F2F2] font-sans text-center">
-            
-            <div className="inline-block bg-[#E8E5FB] text-[#7765DA] font-semibold px-4 py-1 rounded-full text-sm mb-8">
-                ✨ Intervue Poll
+        <main className="flex flex-col items-center justify-center min-h-screen bg-[#F2F2F2] font-sans">
+            <div className="text-center">
+                <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-[#7765DA]"></div>
+                <h1 className="text-3xl font-bold text-[#373737] mt-8">
+                    Waiting for the teacher...
+                </h1>
+                <p className="text-lg text-[#6E6E6E] mt-2">
+                    The poll will begin shortly.
+                </p>
             </div>
-
-            {/* Simple CSS loading spinner */}
-            <div className="w-16 h-16 border-4 border-t-4 border-gray-200 border-t-[#7765DA] rounded-full animate-spin mb-8"></div>
-            
-            <h1 className="text-3xl font-bold text-[#373737]">
-                You're in!
-            </h1>
-            <p className="text-xl text-[#6E6E6E] mt-2">
-                Wait for the teacher to ask a question...
-            </p>
-
         </main>
     );
 }

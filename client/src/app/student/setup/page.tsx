@@ -7,7 +7,6 @@ export default function StudentSetupPage() {
     const { socket } = useSocket();
 
     const handleContinue = () => {
-        // We no longer need a room code, just the student's name
         if (socket && name.trim()) {
             socket.emit('join_poll', { name });
         }
@@ -16,8 +15,8 @@ export default function StudentSetupPage() {
     useEffect(() => {
         if(socket) {
             const handleJoinSuccess = () => {
-                // Navigate to the waiting page on successful join
-                window.location.href = '/student/waiting';
+                // Navigate directly to the poll page, skipping the waiting room
+                window.location.href = '/student/poll';
             };
 
             const handleError = (data: { message: string }) => {

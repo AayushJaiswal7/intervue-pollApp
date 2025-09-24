@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-// useRouter is removed to fix the navigation module resolution error
-import { useSocket } from '../../../context/SocketContext';  // Corrected relative path
+import { useSocket } from '../../../context/SocketContext'; // Corrected relative path again for build system
 import { Plus, Trash2 } from 'lucide-react';
 
 // Define the type for a single poll option
@@ -20,7 +19,6 @@ export default function TeacherSetupPage() {
     ]);
     const [nextId, setNextId] = useState(3);
     const [timeLimit, setTimeLimit] = useState(60);
-    // router is removed
     const { socket } = useSocket();
 
     const addOption = () => {
@@ -43,29 +41,24 @@ export default function TeacherSetupPage() {
     };
 
     const setCorrectAnswer = (id: number) => {
-        // Sets the selected option to true and all others to false
         setOptions(options.map(option =>
             ({ ...option, isCorrect: option.id === id })
         ));
     };
     
     const setAsIncorrect = (id: number) => {
-        // Specifically sets an option to false
         setOptions(options.map(option =>
             option.id === id ? { ...option, isCorrect: false } : option
         ));
     };
 
-
-    // This function sends the poll data to the server
+    // This function now ONLY emits the event to the server.
     const handleAskQuestion = () => {
         if (socket && question.trim() && options.every(opt => opt.text.trim())) {
-            // Ensure at least one correct answer is selected
             if (!options.some(opt => opt.isCorrect)) {
                 alert("Please select one correct answer.");
                 return;
             }
-            console.log("Emitting create_poll event to the server");
             socket.emit('create_poll', {
                 question,
                 options,
@@ -76,20 +69,20 @@ export default function TeacherSetupPage() {
         }
     };
 
-    // This effect listens for the server's response
+    // This useEffect hook now reliably handles navigation AFTER the server confirms.
     useEffect(() => {
         if (socket) {
-            const handlePollCreated = (data: { roomCode: string }) => {
-                console.log('Server confirmed poll creation. Room code:', data.roomCode);
-                // Navigate to the teacher's live poll view using standard browser navigation
-                window.location.href = `/teacher/poll/${data.roomCode}`;
+            const handlePollCreated = () => {
+                // Once the server confirms the poll is made, navigate to the results page.
+                window.location.href = `/teacher/results`;
             };
 
-            socket.on('poll_created', handlePollCreated);
+            // The server sends this event to confirm the poll data was received.
+            socket.on('poll_data_for_teacher', handlePollCreated);
 
-            // Clean up the listener when the component is no longer on screen
+            // Clean up the listener when we leave the page.
             return () => {
-                socket.off('poll_created', handlePollCreated);
+                socket.off('poll_data_for_teacher', handlePollCreated);
             };
         }
     }, [socket]);
@@ -99,18 +92,17 @@ export default function TeacherSetupPage() {
             <div className="w-full max-w-3xl">
                 <div className="bg-white rounded-xl shadow-lg p-8">
                     <div className="text-center mb-10">
-                        <div className="inline-block bg-[#E8E5FB] text-[#7765DA] font-semibold px-4 py-1 rounded-full text-sm mb-4">
+                         <div className="inline-block bg-[#E8E5FB] text-[#7765DA] font-semibold px-4 py-1 rounded-full text-sm mb-4">
                             ✨ Intervue Poll - Teacher
                         </div>
                         <h1 className="text-4xl md:text-5xl font-bold text-[#373737]">
-                            Let's Get Started
+                            Create a New Poll
                         </h1>
                         <p className="text-lg text-[#6E6E6E] mt-4 max-w-xl mx-auto">
-                            You'll have the ability to create and manage polls, ask questions, and monitor your students' responses in real-time.
+                            Fill out the details below. The poll will start for students as soon as you click "Ask Question".
                         </p>
                     </div>
-
-                    <div className="space-y-8">
+                     <div className="space-y-8">
                         <div>
                             <div className="flex justify-between items-center mb-2">
                                 <label htmlFor="question" className="text-lg font-semibold text-[#373737]">
@@ -136,8 +128,7 @@ export default function TeacherSetupPage() {
                                 rows={3}
                             />
                         </div>
-
-                        <div>
+                         <div>
                             <div className="flex justify-between items-center mb-2">
                                 <label className="text-lg font-semibold text-[#373737]">Edit Options</label>
                                 <label className="text-lg font-semibold text-[#373737]">Is it Correct?</label>
@@ -159,7 +150,7 @@ export default function TeacherSetupPage() {
                                             <label className="flex items-center cursor-pointer">
                                                 <input 
                                                     type="radio" 
-                                                    name="correct-answer" // This name is shared by all "Yes" buttons
+                                                    name="correct-answer"
                                                     checked={option.isCorrect} 
                                                     onChange={() => setCorrectAnswer(option.id)} 
                                                     className="h-5 w-5 text-[#7765DA] focus:ring-[#C3B9F5]"
@@ -169,7 +160,7 @@ export default function TeacherSetupPage() {
                                             <label className="flex items-center cursor-pointer">
                                                 <input 
                                                     type="radio" 
-                                                    name={`is-correct-option-${option.id}`} // Unique name for the "No" button
+                                                    name={`is-correct-option-${option.id}`}
                                                     checked={!option.isCorrect} 
                                                     onChange={() => setAsIncorrect(option.id)}
                                                     className="h-5 w-5 text-gray-600 focus:ring-gray-400"
@@ -192,8 +183,7 @@ export default function TeacherSetupPage() {
                             )}
                         </div>
                     </div>
-
-                    <div className="mt-12 text-right">
+                     <div className="mt-12 text-right">
                         <button
                              onClick={handleAskQuestion}
                              className="px-8 py-4 rounded-lg font-semibold text-white text-lg bg-[#7765DA] hover:bg-[#5767D0] shadow-md hover:shadow-lg transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-[#C3B9F5]"
