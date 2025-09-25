@@ -1,35 +1,40 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSocket } from '../../../context/SocketContext'; // Using corrected relative path
+import { useSocket } from '../../../context/SocketContext';
+import Link from 'next/link';
+import { CheckCircle } from 'lucide-react';
 
-// Define types to avoid TypeScript errors
-interface PollOption {
+// Interfaces for the data structure remain the same
+interface PollOptionHistory {
     id: number;
     text: string;
-    isCorrect: boolean;
 }
-interface PollResults {
+interface PollResultHistory {
     id: number;
+    count: number;
     percentage: number;
 }
-
+interface PollHistoryItem {
+    question: string;
+    options: PollOptionHistory[];
+    results: PollResultHistory[];
+    correctAnswerId: number;
+}
 
 export default function HistoryPage() {
     const { socket } = useSocket();
-    const [history, setHistory] = useState<any[]>([]);
+    const [history, setHistory] = useState<PollHistoryItem[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         if (socket) {
-            // Request history from server on component mount
             socket.emit('get_history');
-
-            const handlePollHistory = (data: any[]) => {
+            const handlePollHistory = (data: PollHistoryItem[]) => {
                 setHistory(data);
+                setIsLoading(false);
             };
-
             socket.on('poll_history', handlePollHistory);
-
             return () => {
                 socket.off('poll_history', handlePollHistory);
             };
@@ -37,42 +42,57 @@ export default function HistoryPage() {
     }, [socket]);
 
     return (
-        <main className="flex flex-col items-center min-h-screen bg-[#F2F2F2] font-sans p-8">
+        <main className="flex justify-center min-h-screen bg-white font-sans p-4 sm:p-6 md:p-8">
             <div className="w-full max-w-3xl">
-                <div className="flex justify-between items-center mb-6">
-                    <h1 className="text-4xl font-bold text-[#373737]">Poll History</h1>
-                    {/* Replaced Link with a standard anchor tag */}
-                    <a href="/teacher/results" className="text-[#7765DA] font-semibold hover:underline">
-                        Back to Live Poll
-                    </a>
+                <div className="flex justify-between items-center mb-10">
+                    <h1 className="text-4xl font-bold text-gray-800">View Poll History</h1>
+                    <Link href="/teacher/results" className="text-purple-600 font-semibold hover:underline">
+                        ← Back to Live Poll
+                    </Link>
                 </div>
 
-                {history.length === 0 ? (
-                    <p className="text-center text-gray-500 text-lg mt-16">No past polls in this session yet.</p>
+                {isLoading ? (
+                    <div className="text-center text-gray-500 text-lg mt-16">Loading history...</div>
+                ) : history.length === 0 ? (
+                    <div className="text-center text-gray-500 text-lg mt-16">No past polls in this session yet.</div>
                 ) : (
-                    <div className="space-y-8">
+                    <div className="space-y-12">
                         {history.map((poll, index) => (
-                             <div key={index} className="bg-white rounded-xl shadow-lg p-8">
-                                <h2 className="text-xl font-bold text-gray-500 mb-4">Question {index + 1}</h2>
-                                <div className="bg-[#373737] text-white p-6 rounded-lg mb-8">
+                            <div key={index}>
+                                <h2 className="text-2xl font-bold text-gray-700 mb-4">Question {index + 1}</h2>
+                                <div className="bg-gray-700 text-white p-5 rounded-lg mb-6 shadow-md">
                                     <p className="text-xl font-semibold">{poll.question}</p>
                                 </div>
-                                
-                                <div className="space-y-4">
-                                    {poll.options.map((option: PollOption) => {
-                                        const result = poll.results.find((r: PollResults) => r.id === option.id);
+                                <div className="space-y-3">
+                                    {poll.options.map((option) => {
+                                        const result = poll.results.find(r => r.id === option.id);
                                         const percentage = result ? result.percentage : 0;
+                                        const isCorrect = poll.correctAnswerId === option.id;
+
                                         return (
-                                            <div key={option.id} className="border rounded-lg p-4 text-lg relative overflow-hidden bg-gray-50">
-                                                <div 
-                                                    className="absolute top-0 left-0 h-full bg-[#7765DA] opacity-30"
-                                                    style={{ width: `${percentage}%` }}
-                                                ></div>
-                                                <div className="flex justify-between items-center relative z-10">
-                                                    <span className={`font-semibold ${option.isCorrect ? 'text-green-600' : 'text-gray-800'}`}>
-                                                        {option.text} {option.isCorrect && ' (Correct)'}
-                                                    </span>
-                                                    <span className="font-bold text-[#373737]">{percentage}%</span>
+                                            <div key={option.id} className={`border rounded-lg p-3 transition-all ${isCorrect ? 'border-green-500 bg-green-50' : 'border-gray-200 bg-white'}`}>
+                                                <div className="flex items-center justify-between gap-4">
+                                                    {/* Left side: Number and Text */}
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold flex-shrink-0">
+                                                            {poll.options.indexOf(option) + 1}
+                                                        </div>
+                                                        <span className={`font-semibold ${isCorrect ? 'text-green-800' : 'text-gray-800'}`}>
+                                                            {option.text}
+                                                        </span>
+                                                        {isCorrect && <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />}
+                                                    </div>
+
+                                                    {/* Right side: Bar and Percentage */}
+                                                    <div className="flex items-center gap-4 w-1/2 sm:w-2/5">
+                                                        <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
+                                                            <div
+                                                                className="bg-purple-600 h-4 rounded-full"
+                                                                style={{ width: `${percentage}%` }}
+                                                            ></div>
+                                                        </div>
+                                                        <span className="font-bold text-gray-800 w-12 text-right">{percentage}%</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         );
@@ -86,4 +106,3 @@ export default function HistoryPage() {
         </main>
     );
 }
-

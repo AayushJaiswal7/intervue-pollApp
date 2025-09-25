@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import { SocketProvider } from "../context/SocketContext";
 const geistSans = Geist({
@@ -12,25 +12,18 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
-  title: "Intervue Poll",
-  description: "Live polling application",
+  title: "Intervue Live Poll",
+  description: "A real-time polling application.",
 };
 
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <SocketProvider>
-          {children}
-        </SocketProvider>
+      <body className={inter.className}>
+        <SocketProvider>{children}</SocketProvider>
       </body>
     </html>
   );
