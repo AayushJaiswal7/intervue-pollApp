@@ -7,10 +7,10 @@ import { SocketProvider } from "../context/SocketContext";
 //   subsets: ["latin"],
 // });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+// const geistMono = Geist_Mono({
+//   variable: "--font-geist-mono",
+//   subsets: ["latin"],
+// });
 
 const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {

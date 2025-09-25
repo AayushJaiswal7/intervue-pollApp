@@ -22,7 +22,7 @@ export default function StudentSetupPage() {
             <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
                  <div className="text-center mb-8">
                      <div className="inline-block bg-[#E8E5FB] text-[#7765DA] font-semibold px-4 py-1 rounded-full text-sm mb-4">✨ Intervue Poll - Student</div>
-                     <h1 className="text-4xl font-bold text-[#373737]">Let's Get Started</h1>
+                     <h1 className="text-4xl font-bold text-[#373737]">Lets Get Started</h1>
                      <p className="text-lg text-[#6E6E6E] mt-3">Enter your name to join the live poll.</p>
                  </div>
                  <div>
