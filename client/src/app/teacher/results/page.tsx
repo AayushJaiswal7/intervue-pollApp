@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useSocket } from '../../../context/SocketContext';
 import { Eye, Plus, Clock, Users } from 'lucide-react';
 import Link from 'next/link';
-import Participants from '../../../components/Participants';
+// import Participants from '../../../components/Participants';
 interface PollOption { id: number; text: string; isCorrect: boolean; }
 interface PollResult { id: number; count: number; percentage: number; }
 interface Student { id: string; name: string; }
