@@ -47,7 +47,7 @@ Make sure you have Node.js and npm installed on your machine.
 
 1.  **Clone the repository:**
     ```sh
-    git clone [https://github.com/AyushJaiswal7/intervue-poll-app.git](https://github.com/AyushJaiswal7/intervue-poll-app.git)
+    git clone https://github.com/AyushJaiswal7/intervue-poll-app.git
     cd intervue-poll-app
     ```
 
