@@ -16,7 +16,7 @@ export default function TeacherResultsPage() {
     const [timeLeft, setTimeLeft] = useState(0);
     const [showNewQuestionButton, setShowNewQuestionButton] = useState(false);
     const [totalStudents, setTotalStudents] = useState(0);
-    const [participants, setParticipants] = useState<Student[]>([]);
+    // const [participants, setParticipants] = useState<Student[]>([]);
     const [answersCount, setAnswersCount] = useState(0);
 
     useEffect(() => {
@@ -28,14 +28,15 @@ export default function TeacherResultsPage() {
             const handleResultsUpdate = (data: { results: PollResult[], answersCount: number }) => { setResults(data.results); setAnswersCount(data.answersCount); };
             const handleTimerTick = (data: { timeLeft: number }) => setTimeLeft(data.timeLeft);
             const handlePollOver = () => setShowNewQuestionButton(true);
-            const handleStudentListUpdate = (students: Student[]) => setParticipants(students); // Updated handler
+            // const handleStudentListUpdate = (students: Student[]) => setParticipants(students); // Updated handler
 
-            // const handleStudentListUpdate = (students: Student[]) => setTotalStudents(students.length);
+            const handleStudentListUpdate = (students: Student[]) => setTotalStudents(students.length);
             socket.emit('get_initial_data');
             socket.on('initial_data', handleNewQuestion); socket.on('new_question', handleNewQuestion);
             socket.on('results_update', handleResultsUpdate); socket.on('timer_tick', handleTimerTick);
             socket.on('poll_over', handlePollOver); socket.on('student_list_update', handleStudentListUpdate);
-            socket.on('student_list_update', handleStudentListUpdate); // Now handles the full list
+            // socket.on('student_list_update', handleStudentListUpdate); 
+            // Now handles the full list
             return () => {
                 socket.off('initial_data', handleNewQuestion); socket.off('new_question', handleNewQuestion);
                 socket.off('results_update', handleResultsUpdate); socket.off('timer_tick', handleTimerTick);
@@ -43,11 +44,11 @@ export default function TeacherResultsPage() {
             };
         }
     }, [socket]);
-    const handleKickStudent = (studentId: string) => {
-        if (socket) {
-            socket.emit('kick_student', studentId);
-        }
-    };//
+    // const handleKickStudent = (studentId: string) => {
+    //     if (socket) {
+    //         socket.emit('kick_student', studentId);
+    //     }
+    // };//
 
     const formatTime = (seconds: number) => {
         if (seconds < 0) seconds = 0;

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useSocket } from '../../../context/SocketContext';
 import { useRouter } from 'next/navigation';
-import { Plus, Trash2, ChevronDown } from 'lucide-react';
+import { Plus, ChevronDown } from 'lucide-react';
 
 interface PollOption {
     id: number;
@@ -29,11 +29,7 @@ export default function TeacherSetupPage() {
         }
     };
 
-    const removeOption = (id: number) => {
-        if (options.length > 2) {
-            setOptions(options.filter(option => option.id !== id));
-        }
-    };
+    
 
     const updateOptionText = (id: number, newText: string) => {
         setOptions(options.map(opt => opt.id === id ? { ...opt, text: newText } : opt));
@@ -74,10 +70,10 @@ export default function TeacherSetupPage() {
                             Intervue Poll
                         </div>
                         <h1 className="text-4xl font-bold text-gray-800">
-                            Let's Get Started
+                             Let&apos;s Get Started
                         </h1>
                         <p className="text-lg text-gray-500 mt-2">
-                            You'll have the ability to create and manage polls, ask questions, and monitor your students' responses in real-time.
+                            You&apos;ll have the ability to create and manage polls, ask questions, and monitor your students&apos; responses in real-time.
                         </p>
                     </div>
 
