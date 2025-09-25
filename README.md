@@ -85,3 +85,7 @@ This project is structured as a monorepo and requires a two-part deployment:
 
 **Important:** Before deploying, you must update the URLs in `client/context/SocketContext.tsx` and `server/index.js` to point to your live backend URL.
 
+## 🚀 Live Demo
+
+[**View the live application here!**](https://intervue-poll-appdam.vercel.app/)
+
