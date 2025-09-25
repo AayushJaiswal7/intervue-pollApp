@@ -70,10 +70,10 @@ export default function TeacherSetupPage() {
                             Intervue Poll
                         </div>
                         <h1 className="text-4xl font-bold text-gray-800">
-                             Let&apos;s Get Started
+                             Lets Get Started
                         </h1>
                         <p className="text-lg text-gray-500 mt-2">
-                            You&apos;ll have the ability to create and manage polls, ask questions, and monitor your students&apos; responses in real-time.
+                            You  have the ability to create and manage polls, ask questions, and monitor your student responses in real-time.
                         </p>
                     </div>
 

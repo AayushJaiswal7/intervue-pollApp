@@ -2,11 +2,11 @@
 import { useState, useEffect } from 'react';
 import { useSocket } from '../../../context/SocketContext';
 import { Clock, CheckCircle, XCircle } from 'lucide-react';
-import Participants from '../../../components/Participants';//
+// import Participants from '../../../components/Participants';//
 import { useRouter } from 'next/navigation';//
 interface PollOption { id: number; text: string; }
 interface FinalResults { id: number; percentage: number; }
-interface Student { id: string; name: string; }//
+// interface Student { id: string; name: string; }//
 
 export default function StudentPollPage() {
     const { socket } = useSocket();
@@ -18,7 +18,7 @@ export default function StudentPollPage() {
     const [hasSubmitted, setHasSubmitted] = useState(false);
     const [finalResults, setFinalResults] = useState<FinalResults[]>([]);
     const [correctAnswerId, setCorrectAnswerId] = useState<number | null>(null);
-    const [participants, setParticipants] = useState<Student[]>([]);//
+    // const [participants, setParticipants] = useState<Student[]>([]);//
     useEffect(() => {
         if (socket) {
             const handleNewQuestion = (data: { question: string; options: PollOption[], timeLimit: number }) => {
